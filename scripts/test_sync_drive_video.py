@@ -60,11 +60,12 @@ class DriveVideoSyncTests(unittest.TestCase):
             sync.newest_file([PREVIEW, mov], STATE)
 
     def test_only_feature_video_references_change(self):
-        replacements = sync.page_replacements(1, 2)
+        version = sync.read_state()["published_version"]
+        replacements = sync.page_replacements(version, version + 1)
         home_before = sync.PAGES[0].read_text(encoding="utf-8")
         home_after = replacements[sync.PAGES[0]].decode("utf-8")
-        self.assertIn('assets/story-intro-v2.mp4', home_after)
-        self.assertIn('assets/story-intro-poster-v2.jpg', home_after)
+        self.assertIn(f'assets/story-intro-v{version + 1}.mp4', home_after)
+        self.assertIn(f'assets/story-intro-poster-v{version + 1}.jpg', home_after)
         self.assertEqual(home_before.split('<video class="hero-video"', 1)[1].split('</video>', 1)[0],
                          home_after.split('<video class="hero-video"', 1)[1].split('</video>', 1)[0])
 
